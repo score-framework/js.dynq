@@ -38,7 +38,7 @@ of the previous five out of the list::
     # newest comment        # newer-than-newest comment
 
 We should first create a DataSource, that will fetch us the comment objects
-from the database:
+from the database, and register it at the module level:
 
 .. code-block:: javascript
 
@@ -46,9 +46,8 @@ from the database:
         __name__: 'CommentsList',
         __parent__: score.dynq.PollingDataSource,
 
-        __init__: function(self, name, articleId) {
-            self.__super__(name);
-            self.articleId = articleId;
+        __init__: function(self) {
+            self.__super__('comments');
         },
 
         _poll: function(self, queries) {
@@ -58,33 +57,14 @@ from the database:
 
     });
 
+    score.dynq.register(new CommentsList());
 
-You will also need a factory, that can create a CommentsList on demand and
-register it with the module:
-
-.. code-block:: javascript
-
-    var CommentsFactory = score.oop.Class({
-        __name__: 'CommentsFactory',
-        __parent__: score.dynq.Factory,
-
-        regex: /comments-for-article-(\d+)/,
-
-        _create: function(self, name, matches) {
-            return new CommentsList(name, matches[1]);
-        }
-
-    });
-
-    score.dynq.registerFactory(new CommentsFactory());
-
-Now you can access data source of this type through the module itself, create
-queries and get notified whenever the result changes:
+Now you can access query this type through the module itself and get notified
+whenever the result changes:
 
 .. code-block:: javascript
 
-    var source = score.dynq.getDataSource('comments-for-article-14')
-    var query = source.query('0-5');
+    var query = score.dynq.query('comments', {article: 4, limit: 5});
     query.on('result-updated', function(result) {
         // result is a list of whatever the CommentsList object returned.
     });

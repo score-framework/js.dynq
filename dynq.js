@@ -46,54 +46,6 @@
 
     score.extend('dynq', ['oop'], function() {
 
-        var DataSourceFactory = score.oop.Class({
-            __name__: 'DataSourceFactory',
-
-            regex: /.*/,
-
-            sources: {},
-
-            get: function(self, name, match) {
-                if (!(name in self.sources)) {
-                    self.sources[name] = self._create(name, match);
-                    if (self.sources[name] && !(self.sources[name] instanceof DataSource)) {
-                        throw new Error(self.__class__.__name__ + '::_create() did not return a DataSource object');
-                    }
-                }
-                return self.sources[name];
-            },
-
-            _create: function(self, name, match) {
-                throw new Error('Abstract function ' + self.__class__.__name__ + '::_create() called');
-            }
-
-        });
-
-        var Module = new score.oop.Class({
-            __name__: 'DynqModule',
-
-            factories: [],
-
-            registerFactory: function(self, factory) {
-                self.factories.push(factory);
-            },
-
-            getDataSource: function(self, name) {
-                for (var i = 0; i < self.factories.length; i++) {
-                    var factory = self.factories[i];
-                    var match = factory.regex.exec(name);
-                    if (match) {
-                        var source = factory.get(name, match);
-                        if (source) {
-                            return source;
-                        }
-                    }
-                }
-                throw new Error('No factory could load the data source "' + name + '"');
-            }
-
-        });
-
         var Query = score.oop.Class({
             __name__: 'Query',
 
@@ -260,9 +212,29 @@
 
         });
 
-        var module = new Module();
+        var Module = new score.oop.Class({
+            __name__: 'DynqModule',
 
-        module.Factory = DataSourceFactory;
+            sources: [],
+
+            register: function(self, source) {
+                self.sources[name] = source.name;
+            },
+
+            getDataSource: function(self, name) {
+                if (name in self.sources) {
+                    return self.sources[name];
+                }
+                throw new Error('Could not load the data source "' + name + '"');
+            },
+
+            query: function(self, sourceName, query, autoupdate) {
+                return self.getDataSource(sourceName).query(query, autoupdate);
+            }
+
+        });
+
+        var module = new Module();
 
         module.DataSource = DataSource;
 
