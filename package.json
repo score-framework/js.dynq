@@ -1,0 +1,28 @@
+{
+  "name": "score.dynq",
+  "version": "0.0.1",
+  "description": "Library for self-updating query results",
+  "main": "dynq.js",
+  "scripts": {
+    "test": "$(node -e \"console.log(require('path').dirname(require.resolve('mocha')) + '/bin/mocha')\")"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/score-framework/js.dynq.git"
+  },
+  "keywords": [
+    "score",
+    "framework",
+    "dynq"
+  ],
+  "author": "strg.at <score@strg.at>",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/score-framework/js.dynq/issues"
+  },
+  "homepage": "https://github.com/score-framework/js.dynq#readme",
+  "dependencies": [
+      "score.init",
+      "score.oop"
+  ]
+}
