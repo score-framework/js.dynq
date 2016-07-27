@@ -23,6 +23,7 @@
   "homepage": "https://github.com/score-framework/js.dynq#readme",
   "dependencies": [
       "score.init",
-      "score.oop"
+      "score.oop",
+      "bluebird"
   ]
 }
