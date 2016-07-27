@@ -71,7 +71,7 @@ register it with the module:
         regex: /comments-for-article-(\d+)/,
 
         _create: function(self, name, matches) {
-            return new CommentsList(matches[1]);
+            return new CommentsList(name, matches[1]);
         }
 
     });
